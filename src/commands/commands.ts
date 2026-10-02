@@ -1,4 +1,4 @@
-import { type CommandHandler } from "./command_handler"
+export type CommandHandler = (cmd: string, ...args: string[]) => void;
 
 export type CommandsRegistry = Record<string, CommandHandler>
 
@@ -9,8 +9,11 @@ export function registerCommand(registry: CommandsRegistry, cmdName: string, han
 
 
 export function runCommand(registry: CommandsRegistry, cmdName: string, ...args: string[]): void {
-    const command = registry[cmdName];
-    if (command) {
-        command(cmdName, ...args);
+    const handler = registry[cmdName];
+    if (!handler) {
+        throw new Error(`Unknown command: ${cmdName}`);
     }
+
+    handler(cmdName, ...args);
 }
+

@@ -1,21 +1,29 @@
-import { type CommandsRegistry, registerCommand, runCommand } from "./command_registry";
-import { handlerLogin } from "./command_handler";
+import { type CommandsRegistry, registerCommand, runCommand } from "./commands/commands";
+import { handlerLogin } from "./commands/users";
 import process from "process";
 
 function main() {
-    const registry: CommandsRegistry = {}
-    registerCommand(registry, "login", handlerLogin)
-    const cargs = process.argv.slice(2)
-    if (cargs.length === 0) {
+    const args = process.argv.slice(2)
+    
+    if (args.length === 0) {
         console.log("No arguments provided");
-        process.exit(1)
+        process.exit(1);
     }
 
-    const cmdName = cargs[0];
-    const args = cargs.slice(1);
+    const cmdName = args[0];
+    const cmdArgs = args.slice(1);
+    const registry: CommandsRegistry = {}
+    registerCommand(registry, "login", handlerLogin)
 
-    runCommand(registry, cmdName, ...args);
-    
+    try {
+        runCommand(registry, cmdName, ...cmdArgs);
+    } catch (err) {
+        if (err instanceof Error) {
+            console.error(`Error running command: ${cmdName}: ${err.message}`);
+        } else {
+            console.error(`Error running command: ${cmdName}: ${err}`);
+        }
+    }
 }
 
 main();
