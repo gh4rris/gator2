@@ -14,6 +14,10 @@ export async function getUser(name: string) {
     return result;
 }
 
-export async function clearUsers() {
+export async function clearUsers(): Promise<void> {
     await db.delete(users);
+}
+
+export async function getUsers() {
+    return await db.select().from(users);
 }
