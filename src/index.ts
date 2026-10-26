@@ -2,6 +2,7 @@ import { type CommandsRegistry, registerCommand, runCommand } from "./commands/c
 import { handlerLogin, handlerRegister, handlerUsers } from "./commands/users";
 import { handlerReset } from "./commands/reset";
 import { handlerAggregate } from "./commands/aggregate";
+import { handlerAddFeed } from "./commands/feeds";
 
 import process from "process";
 
@@ -17,11 +18,12 @@ async function main() {
     const cmdName = args[0];
     const cmdArgs = args.slice(1);
     const registry: CommandsRegistry = {}
-    registerCommand(registry, "login", handlerLogin)
-    registerCommand(registry, "register", handlerRegister)
-    registerCommand(registry, "reset", handlerReset)
-    registerCommand(registry, "users", handlerUsers)
+    registerCommand(registry, "login", handlerLogin);
+    registerCommand(registry, "register", handlerRegister);
+    registerCommand(registry, "reset", handlerReset);
+    registerCommand(registry, "users", handlerUsers);
     registerCommand(registry, "agg", handlerAggregate);
+    registerCommand(registry, "addfeed", handlerAddFeed);
 
     try {
         await runCommand(registry, cmdName, ...cmdArgs);

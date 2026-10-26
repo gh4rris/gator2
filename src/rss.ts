@@ -43,7 +43,7 @@ export async function fetchFeed(feedURL: string): Promise<RSSFeed> {
 
     const rssItems: RSSItem[] = [];
     for (const item of items) {
-        if (!item.title && !item.link && !item.description && !item.pubDate) {
+        if (!item.title || !item.link || !item.description || !item.pubDate) {
             continue
         }
         rssItems.push({
@@ -61,7 +61,7 @@ export async function fetchFeed(feedURL: string): Promise<RSSFeed> {
             description: channel.description,
             item: rssItems
         }
-    }
+    };
 
     return rss;
     
