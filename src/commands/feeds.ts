@@ -1,5 +1,6 @@
 import { createFeed } from "../lib/db/queries/feeds";
-import { getUser } from "../lib/db/queries/users";
+import { getUser, getUserById } from "../lib/db/queries/users";
+import { getFeeds } from "../lib/db/queries/feeds";
 import type { User, Feed } from "../lib/db/schema";
 
 import { readConfig } from "../config";
@@ -24,4 +25,18 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]): Promis
 function printFeed(user: User, feed: Feed) {
     console.log(`User:\n${user.id}\n${user.createdAt}\n${user.updatedAt}\n${user.name}`)
     console.log(`\nFeed:\n${feed.id}\n${feed.createdAt}\n${feed.updatedAt}\n${feed.name}\n${feed.url}\n${feed.userId}`)
+}
+
+
+export async function handlerListFeeds(cmdName: string): Promise<void> {
+    const feeds = await getFeeds();
+    if (!feeds) {
+        console.log("No feeds to list");
+    }
+    for (const feed of feeds) {
+        const user = await getUserById(feed.userId);
+        console.log(`Feed Name: ${feed.name}`);
+        console.log(`URL: ${feed.url}`);
+        console.log(`User: ${user.name}`);
+    }
 }
