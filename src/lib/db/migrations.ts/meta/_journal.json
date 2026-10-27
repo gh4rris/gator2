@@ -15,6 +15,13 @@
       "when": 1792437611933,
       "tag": "0001_certain_venus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793113964261,
+      "tag": "0002_nebulous_eddie_brock",
+      "breakpoints": true
     }
   ]
 }
