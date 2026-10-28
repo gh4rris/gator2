@@ -22,6 +22,13 @@
       "when": 1793113964261,
       "tag": "0002_nebulous_eddie_brock",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793209682064,
+      "tag": "0003_clear_vance_astro",
+      "breakpoints": true
     }
   ]
 }

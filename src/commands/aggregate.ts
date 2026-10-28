@@ -1,9 +1,66 @@
 import { fetchFeed } from "../rss";
+import { getNextFeedToFetch, markFeedFetched } from "../lib/db/queries/feeds";
+import { parseDuration } from "../lib/utils";
 
 
-export async function handlerAggregate(): Promise<void> {
-    const feedURL = "https://www.wagslane.dev/index.xml";
-    const feedData = await fetchFeed(feedURL);
-    const feedDataStr = JSON.stringify(feedData, null, 2);
-    console.log(feedDataStr);
+export async function handlerAggregate(cmdName: string, ...args: string[]): Promise<void> {
+    if (args.length === 0) {
+        throw new Error(`${cmdName} requires time_between_reqs`);
+    }
+
+    const timeArg = args[0];
+    const timeBetweenRequests = parseDuration(timeArg);
+    if (!timeBetweenRequests) {
+        throw new Error(`Invalid duration: ${timeArg} - use format 1h 30m 15s or 3500ms`);
+    }
+
+    console.log(`Collecting feeds every ${timeArg}...`);
+
+    scrapeFeeds().catch(handleError);
+
+    const interval = setInterval(() => {
+        scrapeFeeds().catch(handleError);
+    }, timeBetweenRequests);
+
+    await new Promise<void>((resolve) => {
+        process.on("SIGINT", () => {
+            console.log("Shutting down feed aggregator...");
+            clearInterval(interval);
+            resolve();
+        })
+    })
 }
+
+
+export async function scrapeFeeds(): Promise<void> {
+    const nextFeed = await getNextFeedToFetch();
+    if (!nextFeed) {
+        throw new Error(`No next feed found`);
+    }
+
+    const rssFeed = await fetchFeed(nextFeed.url);
+    if (!rssFeed) {
+        throw new Error(`Error fetching feed: ${nextFeed.url}`);
+    }
+
+    const markedFeed = await markFeedFetched(nextFeed.id);
+    if (!markedFeed) {
+        throw new Error(`Error marking feed: ${nextFeed.name}`);
+    }
+
+    if (rssFeed.channel.item.length === 0) {
+        console.log("No feed items");
+        return;
+    }
+
+    console.log("Feed items:");
+    for (const item of rssFeed.channel.item) {
+        console.log(`* ${item.title}`);
+    }
+
+}
+
+function handleError(err: unknown) {
+    console.error(`Error scraping feeds: ${err instanceof Error ? err.message : err}`);
+}
+
