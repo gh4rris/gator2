@@ -1,3 +1,4 @@
+import { type FeedFollow } from "../schema";
 import { db } from "..";
 import { feedFollows, feeds, users } from "../schema";
 
@@ -27,5 +28,12 @@ export async function getFeedFollowsForUser(userId: string) {
         feedName: feeds.name
     }).from(feedFollows).where(eq(feedFollows.userId, userId))
         .innerJoin(feeds, eq(feedFollows.feedId, feeds.id));
+}
+
+export async function deleteFeedFollow(userId: string, feedId: string): Promise<FeedFollow> {
+    const [result] = await db.delete(feedFollows).where(
+        and(eq(feedFollows.userId, userId), eq(feedFollows.feedId, feedId))
+    ).returning();
+    return result;
 }
 

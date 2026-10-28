@@ -2,6 +2,7 @@ import { type CommandHandler, UserCommandHandler } from "./commands/commands";
 import { readConfig } from "./config";
 import { getUser } from "./lib/db/queries/users";
 
+
 export function middlewareLoggedIn(handler: UserCommandHandler): CommandHandler {
     return async (cmd: string, ...args: string[]): Promise<void> => {
         const config = readConfig()

@@ -1,5 +1,3 @@
-import { readConfig } from "../config";
-import { getUser } from "../lib/db/queries/users";
 import { type User } from "../lib/db/schema";
 
 
