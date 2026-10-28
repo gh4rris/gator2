@@ -1,6 +1,13 @@
+import { readConfig } from "../config";
+import { getUser } from "../lib/db/queries/users";
+import { type User } from "../lib/db/schema";
+
+
 export type CommandHandler = (cmd: string, ...args: string[]) => Promise<void>;
 
 export type CommandsRegistry = Record<string, CommandHandler>
+
+export type UserCommandHandler = (cmd: string, user: User, ...args: string[]) => Promise<void>;
 
 
 export function registerCommand(registry: CommandsRegistry, cmdName: string, handler: CommandHandler): void {
