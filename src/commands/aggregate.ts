@@ -1,5 +1,6 @@
 import { fetchFeed } from "../rss";
 import { getNextFeedToFetch, markFeedFetched } from "../lib/db/queries/feeds";
+import { createPost } from "../lib/db/queries/posts";
 import { parseDuration } from "../lib/utils";
 
 
@@ -53,8 +54,9 @@ export async function scrapeFeeds(): Promise<void> {
         return;
     }
 
-    console.log("Feed items:");
     for (const item of rssFeed.channel.item) {
+        const date = new Date(item.pubDate);
+        await createPost(markedFeed.id, item.title, item.link, item.description, date);
         console.log(`* ${item.title}`);
     }
 

@@ -1,6 +1,5 @@
-import { type Feed } from "../schema";
+import { type Feed, feeds } from "../schema";
 import { db } from "..";
-import { feeds } from "../schema";
 
 import { eq, sql } from "drizzle-orm";
 
